@@ -102,6 +102,9 @@ class Prompt:
             self.print_help()
             return False
 
+        print("Badly formatted command (try 'help')")
+        return False
+
     def print_help(self):
         print("0..N:    replace with the numbered suggestion")
         print("R0..rN:  always replace with the numbered suggestion")

@@ -5,7 +5,7 @@ This project has been written in `Python3` and is based on the python library `e
 
 ##Initialize environment
 
-In order to get dependancies and run the spell-checker, use:
+In order to get dependencies and run the spell-checker, use:
 ```
 pip -r requirements.txt
 ```

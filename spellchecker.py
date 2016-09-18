@@ -38,6 +38,28 @@ def read_input(file):
     file.close()
     return lines
 
+def run(lang, output):
+    checker = enchant.Dict(lang)
+    for line_number in range(len(lines)):
+        line = lines[line_number]
+        words = line.split(' ')
+        index = 0
+        for word in words:
+            san = sanitizer.Sanitizer(word)
+            word = san.get_word()
+            if len(san.get_word()) > 0 and not checker.check(san.get_word()):
+                word = prompt.prompt(word, checker.suggest(word), line_number)
+            if word is None:
+                print("Aborted.")
+                exit(1)
+            index += 1
+            output.bufferize(san.get_prefix())
+            output.bufferize(word)
+            output.bufferize(san.get_suffix())
+            if index != len(words):
+                output.bufferize(' ')
+        output.bufferize('\n')
+
 if __name__ == "__main__":
     parser = generate_parser()
     args = parser.parse_args()
@@ -48,19 +70,5 @@ if __name__ == "__main__":
     lines = read_input(args.input)
     output = Writer(args.output)
     prompt = prompt.Prompt(lines)
-    checker = enchant.Dict(args.lang)
-    for line in lines:
-        words = line.split(' ')
-        index = 0
-        for word in words:
-            san = sanitizer.Sanitizer(word)
-            if len(san.get_word()) > 0 and not checker.check(san.get_word()):
-                prompt.prompt(san.get_word(), checker.suggest(san.get_word()))
-            index += 1
-            output.bufferize(san.get_prefix())
-            output.bufferize(san.get_word())
-            output.bufferize(san.get_suffix())
-            if index != len(words):
-                output.bufferize(' ')
-        output.bufferize('\n')
+    run(args.lang, output)
     output.flush()
